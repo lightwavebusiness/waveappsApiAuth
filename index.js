@@ -1,7 +1,9 @@
-const request = require('request');
+const request = require('request-promise');
 const express = require('express');
 const url = require("url");
 const crypto = require("crypto");
+const nonce = require('nonce');
+const cookie = require('cookie');
 
 const app = express();
 const baseUrl = "https://api.waveapps.com/";
@@ -39,15 +41,16 @@ console.log(redirectUrl);
 app.get("/token", (req, res) => {
     console.log(req.query.code);
 
-    var redirectUrl = `${req.protocol}://${req.get('host')}/`;
+    //var redirectUrl = `${req.protocol}://${req.get('host')}/`;
+
+    var redirectUrl = `${req.protocol}://${req.get('host')}/token`;
     console.log(redirectUrl);
 
-    var reqUrl = `${baseUrl}oauth/token`;
+    var reqUrl = `${baseUrl}oauth2/token`;
     console.log(reqUrl);
 
-
-    request({
-        url: reqUrl,
+    var options = {
+        uri: reqUrl,
         method: 'POST',
         form: {
             "client_id": config.wave.client_id,
@@ -55,12 +58,20 @@ app.get("/token", (req, res) => {
             "code": req.query.code,
             "redirect_uri" : redirectUrl,
             'grant_type': 'authorization_code'
+        },
+        headers: {
+            "content-type": "application/json"
         }
-      }, function(err, res) {
-        var json = JSON.parse(res.body);
-        console.log("Access Token:", json);
+    }
 
-        
+    request.post(options)
+      .then((accessTokenResponse) => {
+        res.cookie("accessToken", accessTokenResponse);
+        res.redirect("/")
+      })
+      .catch((error) => {
+          console.log(error);
+          res.status(error.statusCode).send("Error: "+error);
       });
 
 })
