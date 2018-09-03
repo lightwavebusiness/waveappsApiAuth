@@ -43,7 +43,7 @@ app.get("/token", (req, res) => {
 
     //var redirectUrl = `${req.protocol}://${req.get('host')}/`;
 
-    var redirectUrl = `${req.protocol}://${req.get('host')}/token`;
+    var redirectUrl = `${req.protocol}://${req.get('host')}/oauth2/token`;
     console.log(redirectUrl);
 
     var reqUrl = `${baseUrl}oauth2/token`;
