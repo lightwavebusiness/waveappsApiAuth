@@ -1,7 +1,7 @@
 # waveapps Api 0Auth2
 A simple, stater project, for authorizing against waveapps api. 
 
-##How to run
+## How to run
 clone project
 run npm install
 
